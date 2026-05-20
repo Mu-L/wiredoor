@@ -1,4 +1,15 @@
 {
   "url": "https://context7.com/wiredoor/wiredoor",
-  "public_key": "pk_lxQbUMmtz1skdpBWRvqKB"
+  "public_key": "pk_lxQbUMmtz1skdpBWRvqKB",
+  "title": "Wiredoor",
+  "description": "Self hosted ingress-as-a-service platform that allows you to expose applications and services running in private or local networks to the internet",
+  "folders": [
+    "documentation"
+  ],
+  "rules": [
+    "Prefer documented APIs and configuration keys over inferred behavior.",
+    "Do not invent environment variables or YAML fields not present in the repository.",
+    "Use WireGuard terminology consistently.",
+    "Prefer examples from documentation when generating configurations.",
+  ]
 }
