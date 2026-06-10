@@ -6,6 +6,10 @@
 import type { Config } from 'jest';
 
 const config: Config = {
+  maxWorkers: 1,
+  testTimeout: 30000,
+  workerIdleMemoryLimit: '512MB',
+
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
