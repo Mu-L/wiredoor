@@ -38,10 +38,6 @@ RUN mkdir -p /var/run/supervisor /var/log/supervisor \
   && chown -R node:node /etc/wireguard \
   && touch /etc/environment \
   && chown node:node /etc/environment \
-  && touch /var/log/supervisor/app.stdout.log \
-  && ln -sf /dev/stdout /var/log/supervisor/app.stdout.log \
-  && touch /var/log/supervisor/app.stderr.log \
-  && ln -sf /dev/stderr /var/log/supervisor/app.stderr.log \
   && setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
 FROM base AS dev-container
@@ -66,7 +62,7 @@ COPY --chown=node:node . .
 FROM python:3.12-alpine3.22 AS python-base
 
 ARG TARGETARCH
-ARG OAUTH2PROXY_VERSION="7.13.0"
+ARG OAUTH2PROXY_VERSION="7.15.3"
 
 RUN apk add --no-cache py3-pip build-base curl \
   && curl -sL https://github.com/oauth2-proxy/oauth2-proxy/releases/download/v${OAUTH2PROXY_VERSION}/oauth2-proxy-v${OAUTH2PROXY_VERSION}.linux-${TARGETARCH}.tar.gz -o /tmp/oauth2-proxy.tar.gz \
