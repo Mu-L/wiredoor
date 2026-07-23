@@ -122,6 +122,16 @@ const validateBypassPaths = (input: string): string => {
   return input;
 };
 
+const pathLocationSchema = Joi.string()
+  .trim(false)
+  .min(1)
+  .max(40)
+  .pattern(/^\/(?:[A-Za-z0-9._~-]+\/?)*$/)
+  .messages({
+    'string.pattern.base':
+      'Path Location must be an absolute URL path containing only letters, numbers, "/", ".", "_", "~", and "-"',
+  });
+
 export const ttlValidator = Joi.string()
   .pattern(/^\d+\s*(s|m|h|d)$/)
   .allow('')
@@ -170,7 +180,7 @@ export const httpServiceValidator: ObjectSchema<HttpServiceType> = Joi.object({
     .allow(null, '')
     .external(validateServiceDomain)
     .optional(),
-  pathLocation: Joi.string().pattern(/^\/.*/).optional(),
+  pathLocation: pathLocationSchema.optional(),
   backendProto: Joi.string().valid('http', 'https').allow(null).optional(),
   backendHost: Joi.string().allow(null).invalid('localhost').optional(),
   backendPort: Joi.number().port().optional(),
