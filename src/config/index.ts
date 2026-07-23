@@ -7,6 +7,9 @@ import { Logger } from '../logger';
 
 dotenv.config();
 
+const defaultAdminEmail = 'admin@example.com';
+const defaultAdminPassword = 'ChangeMe1st!';
+
 const VPN_PORT = process.env.VPN_PORT || '51820';
 const subnet = process.env.VPN_SUBNET || '10.0.0.0/24';
 const defaultPreUpScript = ``;
@@ -24,6 +27,12 @@ iptables -D INPUT -p udp -m udp --dport ${VPN_PORT} -j ACCEPT;
 iptables -D FORWARD -i wg0 -j ACCEPT;
 iptables -D FORWARD -o wg0 -j ACCEPT;
 `;
+
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} must be set`);
+  return value;
+}
 
 function getJWTKey(): string {
   if (process.env.PRIVATE_KEY) {
@@ -47,6 +56,26 @@ function getJWTKey(): string {
   }
 }
 
+function requireAdminEmailEnv(): string {
+  const value = requireEnv('ADMIN_EMAIL');
+  if (value === defaultAdminEmail) {
+    const err = new Error('ADMIN_EMAIL must be changed from the sample value');
+    Logger.warn('Change admin password from sample value', err);
+  }
+  return value;
+}
+
+function requireAdminPasswordEnv(): string {
+  const value = requireEnv('ADMIN_PASSWORD');
+  if (value === defaultAdminPassword) {
+    const err = new Error(
+      'ADMIN_PASSWORD must be changed from the sample value',
+    );
+    Logger.warn('Change admin password from sample value', err);
+  }
+  return value;
+}
+
 export default {
   app: {
     name: process.env.APP_NAME || 'Wiredoor',
@@ -57,8 +86,8 @@ export default {
     format: process.env.LOG_FORMAT || 'console',
   },
   admin: {
-    email: process.env.ADMIN_EMAIL || 'admin@example.com',
-    password: bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'ChangeMe1st!', 10),
+    email: requireAdminEmailEnv(),
+    password: bcrypt.hashSync(requireAdminPasswordEnv(), 10),
   },
   db: {
     type: process.env.DB_CONNECTION || ('sqlite' as 'mysql' | 'sqlite'),
