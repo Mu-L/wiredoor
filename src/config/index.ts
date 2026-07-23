@@ -58,7 +58,7 @@ function getJWTKey(): string {
 function requireAdminEmailEnv(): string {
   const value = requireEnv('ADMIN_EMAIL');
   if (value === defaultAdminEmail) {
-    console.warn('Change default admin email value');
+    console.warn('WARN: Change default admin email value');
   }
   return value;
 }
