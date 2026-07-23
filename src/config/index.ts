@@ -3,7 +3,6 @@ import path from 'path';
 import { randomBytes } from 'crypto';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import { Logger } from '../logger';
 
 dotenv.config();
 
@@ -50,17 +49,16 @@ function getJWTKey(): string {
 
     fs.writeFileSync(filePath, newKey, { mode: 0o600 });
     return newKey;
-  } catch (error: Error | any) {
-    Logger.error('Error loading or generating JWT key:', error);
-    throw error;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error loading or generating JWT key');
   }
 }
 
 function requireAdminEmailEnv(): string {
   const value = requireEnv('ADMIN_EMAIL');
   if (value === defaultAdminEmail) {
-    const err = new Error('ADMIN_EMAIL must be changed from the sample value');
-    Logger.warn('Change admin password from sample value', err);
+    console.warn('Change default admin email value');
   }
   return value;
 }
@@ -68,10 +66,7 @@ function requireAdminEmailEnv(): string {
 function requireAdminPasswordEnv(): string {
   const value = requireEnv('ADMIN_PASSWORD');
   if (value === defaultAdminPassword) {
-    const err = new Error(
-      'ADMIN_PASSWORD must be changed from the sample value',
-    );
-    Logger.warn('Change admin password from sample value', err);
+    throw new Error('ADMIN_PASSWORD must be changed from the sample value');
   }
   return value;
 }
