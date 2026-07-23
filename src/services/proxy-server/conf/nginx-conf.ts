@@ -128,9 +128,9 @@ const toNginxConf = (entriesOrObject): string => {
   return conf.trim();
 };
 
-const safeNginxLocation = (value: string): string => {
+export const safeNginxLocation = (value: string): string => {
   if (!/^\/(?:[A-Za-z0-9._~-]+\/?)*$/.test(value)) {
-    throw new Error(`Unsafe nginx location path: ${value}`);
+    throw new Error(`Unsafe nginx location path: '${value}'`);
   }
 
   return value;
@@ -168,7 +168,7 @@ export class NginxConf {
   }
 
   addLocation(path: string, location: NginxLocationConf): NginxConf {
-    this.addBlock(`location ${safeNginxLocation(path)}`, location.getConf());
+    this.addBlock(`location ${path}`, location.getConf());
 
     return this;
   }
