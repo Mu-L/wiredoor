@@ -21,8 +21,8 @@ COPY docker/resources/supervisor /etc/supervisor/
 COPY docker/resources/fluent-bit /etc/fluent-bit/
 COPY docker/resources/sudoers.d /etc/sudoers.d/
 
-RUN mkdir -p /var/run/supervisor /var/log/supervisor \
-  && chown -R node:node /var/run/supervisor /var/log/supervisor /etc/supervisor/conf.d \
+RUN mkdir -p /var/run/supervisor /var/log/supervisor /var/log/fluent-bit \
+  && chown -R node:node /var/run/supervisor /var/log/supervisor /var/log/fluent-bit /etc/supervisor/conf.d \
   && rm -f /etc/supervisord.conf \
   && ln -s /etc/supervisor/supervisord.conf /etc/supervisord.conf \
   && mkdir -p /var/run/nginx /var/log/nginx /var/lib/nginx /etc/nginx/locations /etc/nginx/ssl /etc/nginx/stream.d /var/www/letsencrypt /var/www/wiredoor-verify \
@@ -38,10 +38,6 @@ RUN mkdir -p /var/run/supervisor /var/log/supervisor \
   && chown -R node:node /etc/wireguard \
   && touch /etc/environment \
   && chown node:node /etc/environment \
-  && touch /var/log/supervisor/app.stdout.log \
-  && ln -sf /dev/stdout /var/log/supervisor/app.stdout.log \
-  && touch /var/log/supervisor/app.stderr.log \
-  && ln -sf /dev/stderr /var/log/supervisor/app.stderr.log \
   && setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
 FROM base AS dev-container
