@@ -120,8 +120,7 @@ export class CoreLogger implements ILogger {
             const responseTimeMs = log.duration as number | undefined;
             const clientIp = log.req_ip as string | undefined;
             const authUser = (log.req_headers as any)?.xAuthUser as
-              | string
-              | undefined;
+              string | undefined;
             // const userAgent = (log.req_headers as any)?.userAgent as
             //   | string
             //   | undefined;
