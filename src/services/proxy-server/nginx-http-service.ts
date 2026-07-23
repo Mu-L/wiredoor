@@ -4,7 +4,7 @@ import { NginxLocationConf } from './conf/nginx-location-conf';
 import { NginxService } from './nginx-service';
 import { DomainRepository } from '../../repositories/domain-repository';
 import IP_CIDR from '../../utils/ip-cidr';
-import { NginxConf } from './conf/nginx-conf';
+import { NginxConf, safeNginxLocation } from './conf/nginx-conf';
 import { Logger } from '../../logger';
 
 type LocationType = 'exact' | 'regex';
@@ -99,7 +99,10 @@ export class NginxHttpService extends NginxService {
 
     const nginxConf = new NginxConf();
 
-    nginxConf.addLocation(service.pathLocation, baseLocation);
+    nginxConf.addLocation(
+      safeNginxLocation(service.pathLocation),
+      baseLocation,
+    );
 
     if (service.requireAuth && service.skipAuthRoutes) {
       const lines = service.skipAuthRoutes
