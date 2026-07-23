@@ -5,6 +5,9 @@ import { nslookupResolvesServerIp } from './domain-validator';
 import Container from 'typedi';
 import { DomainRepository } from '../repositories/domain-repository';
 
+export const SAFE_NGINX_LOCATION_PATTERN =
+  /^\/(?:[A-Za-z0-9._~-]+\/)*[A-Za-z0-9._~-]*$/;
+
 export const validateServiceDomain = async (c: string): Promise<string> => {
   const domain = await Container.get(DomainRepository).getDomainByName(c);
 
@@ -126,7 +129,7 @@ const pathLocationSchema = Joi.string()
   .trim(false)
   .min(1)
   .max(40)
-  .pattern(/^\/(?:[A-Za-z0-9._~-]+\/?)*$/)
+  .pattern(SAFE_NGINX_LOCATION_PATTERN)
   .messages({
     'string.pattern.base':
       'Path Location must be an absolute URL path containing only letters, numbers, "/", ".", "_", "~", and "-"',

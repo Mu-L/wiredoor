@@ -1,3 +1,4 @@
+import { SAFE_NGINX_LOCATION_PATTERN } from '../../../validators/http-service-validator';
 import { NginxLocationConf } from './nginx-location-conf';
 import { NginxServerConf } from './nginx-server-conf';
 
@@ -129,7 +130,7 @@ const toNginxConf = (entriesOrObject): string => {
 };
 
 export const safeNginxLocation = (value: string): string => {
-  if (!/^\/(?:[A-Za-z0-9._~-]+\/?)*$/.test(value)) {
+  if (!SAFE_NGINX_LOCATION_PATTERN.test(value)) {
     throw new Error(`Unsafe nginx location path: '${value}'`);
   }
 
