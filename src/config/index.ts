@@ -3,9 +3,11 @@ import path from 'path';
 import { randomBytes } from 'crypto';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import { Logger } from '../logger';
 
 dotenv.config();
+
+const defaultAdminEmail = 'admin@example.com';
+const defaultAdminPassword = 'ChangeMe1st!';
 
 const VPN_PORT = process.env.VPN_PORT || '51820';
 const subnet = process.env.VPN_SUBNET || '10.0.0.0/24';
@@ -25,6 +27,12 @@ iptables -D FORWARD -i wg0 -j ACCEPT;
 iptables -D FORWARD -o wg0 -j ACCEPT;
 `;
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} must be set`);
+  return value;
+}
+
 function getJWTKey(): string {
   if (process.env.PRIVATE_KEY) {
     return process.env.PRIVATE_KEY;
@@ -41,10 +49,26 @@ function getJWTKey(): string {
 
     fs.writeFileSync(filePath, newKey, { mode: 0o600 });
     return newKey;
-  } catch (error: Error | any) {
-    Logger.error('Error loading or generating JWT key:', error);
-    throw error;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error loading or generating JWT key');
   }
+}
+
+function requireAdminEmailEnv(): string {
+  const value = requireEnv('ADMIN_EMAIL');
+  if (value === defaultAdminEmail) {
+    console.warn('WARN: Change default admin email value');
+  }
+  return value;
+}
+
+function requireAdminPasswordEnv(): string {
+  const value = requireEnv('ADMIN_PASSWORD');
+  if (value === defaultAdminPassword) {
+    throw new Error('ADMIN_PASSWORD must be changed from the sample value');
+  }
+  return value;
 }
 
 export default {
@@ -57,8 +81,8 @@ export default {
     format: process.env.LOG_FORMAT || 'console',
   },
   admin: {
-    email: process.env.ADMIN_EMAIL || 'admin@example.com',
-    password: bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'ChangeMe1st!', 10),
+    email: requireAdminEmailEnv(),
+    password: bcrypt.hashSync(requireAdminPasswordEnv(), 10),
   },
   db: {
     type: process.env.DB_CONNECTION || ('sqlite' as 'mysql' | 'sqlite'),
